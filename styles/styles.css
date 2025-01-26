@@ -26,6 +26,11 @@ body {
   border: 1px solid #ddd;
   border-radius: 4px;
 }
+
+#taskForm textarea {
+  resize: none;
+}
+
 #taskList {
   display: flex;
   flex-direction: column;
