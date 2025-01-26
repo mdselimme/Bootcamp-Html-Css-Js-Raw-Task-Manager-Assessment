@@ -37,6 +37,7 @@ const showDataOnTheWeb = (data) => {
       <p>${element.taskPriority}</p>
       <div class="task-actions">
       <button class="complete-btn">Complete</button>
+      <button class="update-btn">Update</button>
       <button onclick="deleteTaskFromDb(${element.uniqueId})" class="delete-btn">Delete</button>
       </div>
     `;
@@ -44,6 +45,7 @@ const showDataOnTheWeb = (data) => {
   });
 };
 
+// Save Data To Local Storage
 const saveToLocalStorage = (data) => {
   const parseData = JSON.stringify(data);
   localStorage.setItem("tasks", parseData);
@@ -62,6 +64,7 @@ const addToTaskDb = (task) => {
   });
 };
 
+// Delete Data From Local Storage
 const deleteTaskFromDb = (task) => {
   Swal.fire({
     title: "Are you sure ? ",
@@ -91,10 +94,9 @@ const deleteTaskFromDb = (task) => {
       calledData();
     }
   });
-
-  console.log("delete", deleteTask);
 };
 
+// Default Called Data form Db
 const calledData = () => {
   const getData = getDataFromDb();
   showDataOnTheWeb(getData);
