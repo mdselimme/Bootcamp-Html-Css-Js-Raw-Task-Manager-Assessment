@@ -86,6 +86,13 @@
             type="text"
             placeholder="Search by Task Title"
           />
+          <span>or Sort</span>
+          <select onchange="sortMethodFunc(event)">
+            <option selected disabled>Sort By</option>
+            <option value="All">All</option>
+            <option value="Completed">Completed</option>
+            <option value="Incompleted">Incompleted</option>
+          </select>
         </div>
         <div class="task-item task-head">
           <p>Id</p>

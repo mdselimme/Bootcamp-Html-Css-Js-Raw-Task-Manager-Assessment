@@ -310,3 +310,18 @@ const completeTaskFromTask = async (id) => {
     }
   }
 };
+
+// Sort Method By Complete or inComplete
+const sortMethodFunc = async (event) => {
+  const selectedValue = event.target.value;
+  const allTask = await getDataFromDb();
+  let filterTask;
+  if (selectedValue === "All") {
+    filterTask = allTask;
+  } else if (selectedValue === "Completed") {
+    filterTask = allTask.filter((task) => task.completeTask);
+  } else if (selectedValue === "Incompleted") {
+    filterTask = allTask.filter((task) => !task.completeTask);
+  }
+  showDataOnTheWeb(filterTask);
+};

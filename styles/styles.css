@@ -97,8 +97,9 @@ body {
   cursor: pointer;
   color: white;
 }
-.search-input input {
-  width: 50%;
+.search-input input,
+.search-input select {
+  width: 40%;
   padding: 10px;
   background: #fff;
   border: 1px solid #6c5ce7;
@@ -152,7 +153,8 @@ body {
     grid-template-columns: 100%;
     gap: 10px;
   }
-  .search-input input {
+  .search-input input,
+  .search-input select {
     width: 80%;
     padding: 8px;
     font-size: 0.8rem;
