@@ -1,3 +1,13 @@
+// Show error Common Function
+const showErrorCommonFunc = (err) => {
+  Swal.fire({
+    icon: "warning",
+    title: `Message ${err}`,
+    showConfirmButton: false,
+    timer: 1500,
+  });
+};
+
 // Get data from Json Data from localStorage database
 const getDataFromDb = () => {
   try {
@@ -8,12 +18,7 @@ const getDataFromDb = () => {
     return [];
   } catch (err) {
     if (err) {
-      Swal.fire({
-        icon: "warning",
-        title: `Message ${err}`,
-        showConfirmButton: false,
-        timer: 1500,
-      });
+      showErrorCommonFunc(err);
       return [];
     }
   }
@@ -34,12 +39,7 @@ const addTask = (event) => {
     event.target.reset();
   } catch (err) {
     if (err) {
-      Swal.fire({
-        icon: "warning",
-        title: `Message ${err}`,
-        showConfirmButton: false,
-        timer: 1500,
-      });
+      showErrorCommonFunc(err);
     }
   }
 };
@@ -104,26 +104,33 @@ const showDataOnTheWeb = (data) => {
     }
   } catch (err) {
     if (err) {
-      Swal.fire({
-        icon: "warning",
-        title: `Message ${err}`,
-        showConfirmButton: false,
-        timer: 1500,
-      });
+      showErrorCommonFunc(err);
     }
   }
 };
 
 // Default Called Data form Db
 const calledData = () => {
-  const getData = getDataFromDb();
-  showDataOnTheWeb(getData);
+  try {
+    const getData = getDataFromDb();
+    showDataOnTheWeb(getData);
+  } catch (err) {
+    if (err) {
+      showErrorCommonFunc(err);
+    }
+  }
 };
 
 // Save Json Data To Local Storage
 const saveToLocalStorage = (data) => {
-  const parseData = JSON.stringify(data);
-  localStorage.setItem("tasks", parseData);
+  try {
+    const parseData = JSON.stringify(data);
+    localStorage.setItem("tasks", parseData);
+  } catch (err) {
+    if (err) {
+      showErrorCommonFunc(err);
+    }
+  }
 };
 
 // -- Add task in the localStorage database --
@@ -140,12 +147,7 @@ const addToTaskDb = (task) => {
     });
   } catch (err) {
     if (err) {
-      Swal.fire({
-        icon: "warning",
-        title: `Message ${err}`,
-        showConfirmButton: false,
-        timer: 1500,
-      });
+      showErrorCommonFunc(err);
     }
   }
 };
@@ -181,12 +183,7 @@ const deleteTaskFromDb = (task) => {
     });
   } catch (err) {
     if (err) {
-      Swal.fire({
-        icon: "warning",
-        title: `Message ${err}`,
-        showConfirmButton: false,
-        timer: 1500,
-      });
+      showErrorCommonFunc(err);
     }
   }
 };
@@ -199,12 +196,7 @@ const findUniqueIdData = (id) => {
     return findData;
   } catch (err) {
     if (err) {
-      Swal.fire({
-        icon: "warning",
-        title: `Message ${err}`,
-        showConfirmButton: false,
-        timer: 1500,
-      });
+      showErrorCommonFunc(err);
     }
   }
 };
@@ -225,12 +217,7 @@ const updateDataDisplay = (id) => {
     updateTaskPriority.value = findData.taskPriority;
   } catch (err) {
     if (err) {
-      Swal.fire({
-        icon: "warning",
-        title: `Message ${err}`,
-        showConfirmButton: false,
-        timer: 1500,
-      });
+      showErrorCommonFunc(err);
     }
   }
 };
@@ -258,12 +245,7 @@ const UpdateTaskForm = (event) => {
     document.getElementById("addToTaskBox").style.display = "block";
   } catch (err) {
     if (err) {
-      Swal.fire({
-        icon: "warning",
-        title: `Message ${err}`,
-        showConfirmButton: false,
-        timer: 1500,
-      });
+      showErrorCommonFunc(err);
     }
   }
 };
@@ -284,12 +266,7 @@ const searchTextInput = (event) => {
     }
   } catch (err) {
     if (err) {
-      Swal.fire({
-        icon: "warning",
-        title: `Message ${err}`,
-        showConfirmButton: false,
-        timer: 1500,
-      });
+      showErrorCommonFunc(err);
     }
   }
 };
@@ -304,12 +281,7 @@ const completeTaskFromTask = (id) => {
     calledData();
   } catch (err) {
     if (err) {
-      Swal.fire({
-        icon: "warning",
-        title: `Message ${err}`,
-        showConfirmButton: false,
-        timer: 1500,
-      });
+      showErrorCommonFunc(err);
     }
   }
 };
