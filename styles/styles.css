@@ -1,4 +1,7 @@
+/* Google font Link  */
 @import url("https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap");
+
+/* == Some Default Css Start Here == */
 * {
   margin: 0;
   padding: 0;
@@ -18,6 +21,9 @@ body {
   border-radius: 5px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
+/* == Some Default Css End Here == */
+
+/* == Task Form style Css Start here ==  */
 #taskForm {
   display: flex;
   flex-direction: column;
@@ -46,6 +52,10 @@ body {
   font-weight: 600;
   color: #000000;
 }
+
+/* == Task Form style Css End here ==  */
+
+/* == Task List Css Start Here == */
 
 .taskList {
   display: flex;
@@ -125,3 +135,31 @@ body {
 #UpdateToTaskBox {
   display: none;
 }
+
+/* == Task List Css End Here == */
+
+/* Responsive Css For Mobile  Start */
+
+@media screen and (max-width: 575px) {
+  body {
+    max-width: 95%;
+    margin: 0 auto;
+    padding: 10px;
+    line-height: 1.6;
+  }
+  .task-item {
+    padding: 10px;
+    grid-template-columns: 100%;
+    gap: 10px;
+  }
+  .search-input input {
+    width: 80%;
+    padding: 8px;
+    font-size: 0.8rem;
+  }
+  .delete-btn {
+    margin-top: 0.8rem;
+  }
+}
+
+/* Responsive Css For Mobile End  */
