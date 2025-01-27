@@ -1,17 +1,5 @@
 console.log("Task Manager");
 
-// Find Input Data From Data Input
-const addTask = () => {
-  const taskName = document.getElementById("taskTitle").value;
-  const taskDescription = document.getElementById("taskDescription").value;
-  const taskPriority = document.getElementById("taskPriority").value;
-  const uniqueId = new Date().getTime().toString();
-  const data = { uniqueId, taskName, taskDescription, taskPriority };
-  addToTaskDb(data);
-  const getData = getDataFromDb();
-  showDataOnTheWeb(getData);
-};
-
 // Get data from localStorage database
 const getDataFromDb = () => {
   const getTask = localStorage.getItem("tasks");
@@ -19,6 +7,20 @@ const getDataFromDb = () => {
     return JSON.parse(getTask);
   }
   return [];
+};
+
+// Find Input Data From Data Input
+const addTask = (event) => {
+  event.preventDefault();
+  const taskName = event.target.taskTitle.value;
+  const taskDescription = event.target.taskDescription.value;
+  const taskPriority = event.target.taskPriority.value;
+  const uniqueId = new Date().getTime().toString();
+  const data = { uniqueId, taskName, taskDescription, taskPriority };
+  addToTaskDb(data);
+  const getData = getDataFromDb();
+  showDataOnTheWeb(getData);
+  event.target.reset();
 };
 
 // Display data on the website
@@ -92,35 +94,56 @@ const deleteTaskFromDb = (task) => {
   });
 };
 
-const findUniqueIdData = (id) => {
-  const allData = getDataFromDb();
-  const findData = allData.find((ele) => parseInt(ele.uniqueId) === id);
-  return findData;
-};
+// Find Task Data By Id
+// const findUniqueIdData = (id) => {
+document.getElementById("UpdateToTaskBox").style.display = "block";
+document.getElementById("addToTaskBox").style.display = "none";
+//   const allData = getDataFromDb();
+//   const findData = allData.find((ele) => parseInt(ele.uniqueId) === id);
+//   const upTaskTitle = document.getElementById("updateTaskTitle");
+//   const upTaskDescription = document.getElementById("updateTaskDescription");
+//   const updateTaskPriority = document.getElementById("updateTaskPriority");
+//   upTaskTitle.value = findData.taskName;
+//   upTaskDescription.value = findData.taskDescription;
+//   updateTaskPriority.value = findData.taskPriority;
+// };
 
 const updateData = (id) => {
-  const findData = findUniqueIdData(id);
-  const updateBtn = document.getElementById("updateBtn");
-  const submitBtn = document.getElementById("submitBtn");
-  updateBtn.style.display = "block";
-  submitBtn.style.display = "none";
-  showUpdateDataInInput(findData);
+  // findUniqueIdData(id);
+  const allData = getDataFromDb();
+  document.getElementById("UpdateToTaskBox").style.display = "block";
+  document.getElementById("addToTaskBox").style.display = "none";
+  const findData = allData.find((ele) => parseInt(ele.uniqueId) === id);
+  const uniqueId = document.getElementById("uniqueId");
+  const upTaskTitle = document.getElementById("updateTaskTitle");
+  const upTaskDescription = document.getElementById("updateTaskDescription");
+  const updateTaskPriority = document.getElementById("updateTaskPriority");
+  uniqueId.value = findData.uniqueId;
+  upTaskTitle.value = findData.taskName;
+  upTaskDescription.value = findData.taskDescription;
+  updateTaskPriority.value = findData.taskPriority;
+  // document.getElementById("updateTaskTitle").value = findData.taskName;
+  // document.getElementById("updateTaskDescription").value =
+  //   findData.taskDescription;
+  // document.getElementById("updateTaskPriority").value = findData.taskPriority;
+  // showUpdateDataInInput(findData);
 };
 
-const showUpdateDataInInput = (tasksData) => {
-  const title = document.getElementById("taskTitle");
-  const description = document.getElementById("taskDescription");
-  const priority = document.getElementById("taskPriority");
-  title.value = tasksData.taskName;
-  description.value = tasksData.taskDescription;
-  priority.value = tasksData.taskPriority;
-};
+// const showUpdateDataInInput = (tasksData) => {
+//   console.log("showdata = ", tasksData);
+//   document.getElementById("updateTaskTitle").value = tasksData.taskName;
+//   document.getElementById("updateTaskDescription").value =
+//     tasksData.taskDescription;
+//   document.getElementById("updateTaskPriority").value = tasksData.taskPriority;
+// };
 
-const updateTaskDataAndSaveToDb = () => {
-  const title = document.getElementById("taskTitle").value;
-  const description = document.getElementById("taskDescription").value;
-  const priority = document.getElementById("taskPriority").value;
-  console.log("update data = ", title, description, priority);
+const UpdateTaskForm = (event) => {
+  event.preventDefault();
+  const uniqueId = event.target.uniqueId.value;
+  const taskName = event.target.taskTitle.value;
+  const taskDescription = event.target.taskDescription.value;
+  const taskPriority = event.target.taskPriority.value;
+  console.log(uniqueId, taskName, taskDescription, taskPriority);
 };
 
 // Default Called Data form Db

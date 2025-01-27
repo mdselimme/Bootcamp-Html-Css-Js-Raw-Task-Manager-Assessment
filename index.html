@@ -14,35 +14,60 @@
     <div class="container">
       <h1>Task Manager</h1>
       <!-- Task Input Form -->
-      <form id="taskForm">
-        <input
-          type="text"
-          id="taskTitle"
-          name="taskTitle"
-          placeholder="Task Title"
-          required
-        />
-        <textarea
-          rows="5"
-          cols="20"
-          id="taskDescription"
-          name="taskDescription"
-          placeholder="Task Description"
-        ></textarea>
-        <select id="taskPriority" name="taskPriority">
-          <option selected disabled>Priority</option>
-          <option value="Low Priority">Low Priority</option>
-          <option value="Medium Priority">Medium Priority</option>
-          <option value="High Priority">High Priority</option>
-        </select>
-        <button onclick="addTask()" type="submit" id="submitBtn">
-          Add Task
-        </button>
-        <button onclick="updateTask()" id="updateBtn" type="submit">
-          Update Task
-        </button>
-      </form>
+      <div id="addToTaskBox">
+        <form onsubmit="addTask(event)" id="taskForm">
+          <input
+            type="text"
+            id="taskTitle"
+            name="taskTitle"
+            placeholder="Task Title"
+            required
+          />
+          <textarea
+            rows="5"
+            cols="20"
+            id="taskDescription"
+            name="taskDescription"
+            placeholder="Task Description"
+          ></textarea>
+          <select id="taskPriority" name="taskPriority">
+            <option selected disabled>Priority</option>
+            <option value="Low Priority">Low Priority</option>
+            <option value="Medium Priority">Medium Priority</option>
+            <option value="High Priority">High Priority</option>
+          </select>
+          <button id="updateBtn" type="submit">Add Task</button>
+        </form>
+      </div>
       <!-- Task List Container -->
+      <!-- Update Task Input Form -->
+      <div id="UpdateToTaskBox">
+        <form onsubmit="UpdateTaskForm(event)" id="taskForm">
+          <input type="text" id="uniqueId" name="uniqueId" disabled />
+          <input
+            type="text"
+            id="updateTaskTitle"
+            name="taskTitle"
+            placeholder="Task Title"
+            required
+          />
+          <textarea
+            rows="5"
+            cols="20"
+            id="updateTaskDescription"
+            name="taskDescription"
+            placeholder="Task Description"
+          ></textarea>
+          <select id="updateTaskPriority" name="taskPriority">
+            <option selected disabled>Priority</option>
+            <option value="Low Priority">Low Priority</option>
+            <option value="Medium Priority">Medium Priority</option>
+            <option value="High Priority">High Priority</option>
+          </select>
+          <button type="submit" id="submitBtn">Update Task</button>
+        </form>
+      </div>
+      <!-- Update Task List Container -->
       <div id="taskList"></div>
     </div>
     <script src="./javascript/taskManager.js"></script>
