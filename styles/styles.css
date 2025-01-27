@@ -70,3 +70,7 @@ body {
 .update-btn {
   background-color: crimson;
 }
+
+#updateBtn {
+  display: none;
+}

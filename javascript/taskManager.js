@@ -1,17 +1,15 @@
 console.log("Task Manager");
 
 // Find Input Data From Data Input
-const addTask = (event) => {
-  event.preventDefault();
-  const taskName = event.target.taskTitle.value;
-  const taskDescription = event.target.taskDescription.value;
-  const taskPriority = event.target.taskPriority.value;
+const addTask = () => {
+  const taskName = document.getElementById("taskTitle").value;
+  const taskDescription = document.getElementById("taskDescription").value;
+  const taskPriority = document.getElementById("taskPriority").value;
   const uniqueId = new Date().getTime().toString();
   const data = { uniqueId, taskName, taskDescription, taskPriority };
   addToTaskDb(data);
   const getData = getDataFromDb();
   showDataOnTheWeb(getData);
-  event.target.reset();
 };
 
 // Get data from localStorage database
@@ -37,7 +35,7 @@ const showDataOnTheWeb = (data) => {
       <p>${element.taskPriority}</p>
       <div class="task-actions">
       <button class="complete-btn">Complete</button>
-      <button class="update-btn">Update</button>
+      <button onclick="updateData(${element.uniqueId})" class="update-btn">Update</button>
       <button onclick="deleteTaskFromDb(${element.uniqueId})" class="delete-btn">Delete</button>
       </div>
     `;
@@ -77,9 +75,7 @@ const deleteTaskFromDb = (task) => {
   }).then((result) => {
     if (result.isConfirmed) {
       const allTask = getDataFromDb();
-      allTask.forEach((err) => {
-        console.log(err.uniqueId);
-      });
+
       const deleteTask = allTask.filter(
         (item) => parseInt(item.uniqueId) !== task
       );
@@ -94,6 +90,37 @@ const deleteTaskFromDb = (task) => {
       calledData();
     }
   });
+};
+
+const findUniqueIdData = (id) => {
+  const allData = getDataFromDb();
+  const findData = allData.find((ele) => parseInt(ele.uniqueId) === id);
+  return findData;
+};
+
+const updateData = (id) => {
+  const findData = findUniqueIdData(id);
+  const updateBtn = document.getElementById("updateBtn");
+  const submitBtn = document.getElementById("submitBtn");
+  updateBtn.style.display = "block";
+  submitBtn.style.display = "none";
+  showUpdateDataInInput(findData);
+};
+
+const showUpdateDataInInput = (tasksData) => {
+  const title = document.getElementById("taskTitle");
+  const description = document.getElementById("taskDescription");
+  const priority = document.getElementById("taskPriority");
+  title.value = tasksData.taskName;
+  description.value = tasksData.taskDescription;
+  priority.value = tasksData.taskPriority;
+};
+
+const updateTaskDataAndSaveToDb = () => {
+  const title = document.getElementById("taskTitle").value;
+  const description = document.getElementById("taskDescription").value;
+  const priority = document.getElementById("taskPriority").value;
+  console.log("update data = ", title, description, priority);
 };
 
 // Default Called Data form Db
