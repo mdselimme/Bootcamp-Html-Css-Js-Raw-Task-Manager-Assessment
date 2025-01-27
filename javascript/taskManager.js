@@ -1,8 +1,8 @@
 // Show error Common Function
-const showErrorCommonFunc = (err) => {
+const showSweatAlert = (err, icon) => {
   Swal.fire({
-    icon: "warning",
-    title: `Message ${err}`,
+    icon: icon,
+    title: `${err.message}`,
     showConfirmButton: false,
     timer: 1500,
   });
@@ -21,11 +21,11 @@ const getDataFromDbAsyncFunc = async (item) => {
 };
 
 // Creat Asynchronous Wrapper for set data to localStorage
-const setDataOnTheDbAsyncFunc = async (item, value) => {
+const setDataOnTheDbAsyncFunc = async (item, value, message) => {
   return new Promise((resolve, reject) => {
     try {
       localStorage.setItem(item, value);
-      resolve("Save data Successfully");
+      resolve(message);
     } catch (error) {
       reject(error);
     }
@@ -42,7 +42,7 @@ const getDataFromDb = async () => {
     return [];
   } catch (err) {
     if (err) {
-      showErrorCommonFunc(err);
+      showSweatAlert(err, "warning");
       return [];
     }
   }
@@ -51,9 +51,11 @@ const getDataFromDb = async () => {
 // Show and Display All Data On the web page
 const showDataOnTheWeb = (data) => {
   try {
+    // task list element find by id
     const taskList = document.getElementById("taskList");
     const taskHead = document.getElementById("taskHead");
     taskList.textContent = "";
+    // if no data added show this message
     if (data.length === 0) {
       taskHead.style.display = "none";
       taskList.innerHTML = `<h1 class="show-no-task">No Task Added</h1>`;
@@ -108,7 +110,7 @@ const showDataOnTheWeb = (data) => {
     }
   } catch (err) {
     if (err) {
-      showErrorCommonFunc(err);
+      showSweatAlert(err, "warning");
     }
   }
 };
@@ -118,16 +120,13 @@ const addToTaskDb = async (task) => {
   try {
     const result = await getDataFromDb();
     const setTask = [...result, task];
-    await saveToLocalStorage(setTask);
-    Swal.fire({
-      icon: "success",
-      title: "Add Task Successfully",
-      showConfirmButton: false,
-      timer: 1500,
+    await saveToLocalStorage(setTask, {
+      message: "Added Task Successfully",
+      code: 200,
     });
   } catch (err) {
     if (err) {
-      showErrorCommonFunc(err);
+      showSweatAlert(err, "warning");
     }
   }
 };
@@ -136,6 +135,7 @@ const addToTaskDb = async (task) => {
 const addTask = async (event) => {
   event.preventDefault();
   try {
+    // get and find all data from input to add to task
     const taskName = event.target.taskTitle.value;
     const taskDescription = event.target.taskDescription.value;
     const taskPriority = event.target.taskPriority.value;
@@ -146,7 +146,7 @@ const addTask = async (event) => {
     event.target.reset();
   } catch (err) {
     if (err) {
-      showErrorCommonFunc(err);
+      showSweatAlert(err, "warning");
     }
   }
 };
@@ -160,19 +160,21 @@ const calledData = async () => {
     showDataOnTheWeb(getData);
   } catch (err) {
     if (err) {
-      showErrorCommonFunc(err);
+      showSweatAlert(err, "warning");
     }
   }
 };
 
 // Save Json Data To Local Storage
-const saveToLocalStorage = async (data) => {
+const saveToLocalStorage = async (data, message) => {
   try {
     const parseData = JSON.stringify(data);
-    await setDataOnTheDbAsyncFunc("tasks", parseData);
+    await setDataOnTheDbAsyncFunc("tasks", parseData, message).then((resp) =>
+      showSweatAlert(resp, "success")
+    );
   } catch (err) {
     if (err) {
-      showErrorCommonFunc(err);
+      showSweatAlert(err, "warning");
     }
   }
 };
@@ -195,20 +197,16 @@ const deleteTaskFromDb = async (task) => {
         const deleteTask = allTask.filter(
           (item) => parseInt(item.uniqueId) !== task
         );
-        await saveToLocalStorage(deleteTask);
-        Swal.fire({
-          title: "Deleted!",
-          text: "Your file has been deleted.",
-          icon: "success",
-          showConfirmButton: false,
-          timer: 1500,
+        await saveToLocalStorage(deleteTask, {
+          message: "Delete Task Successfully",
+          code: 200,
         });
         await calledData();
       }
     });
   } catch (err) {
     if (err) {
-      showErrorCommonFunc(err);
+      showSweatAlert(err, "warning");
     }
   }
 };
@@ -221,7 +219,7 @@ const findUniqueIdData = async (id) => {
     return findData;
   } catch (err) {
     if (err) {
-      showErrorCommonFunc(err);
+      showSweatAlert(err, "warning");
     }
   }
 };
@@ -232,6 +230,7 @@ const updateDataDisplay = async (id) => {
     const findData = await findUniqueIdData(id);
     document.getElementById("UpdateToTaskBox").style.display = "block";
     document.getElementById("addToTaskBox").style.display = "none";
+    // find all element to update display data
     const uniqueId = document.getElementById("uniqueId");
     const upTaskTitle = document.getElementById("updateTaskTitle");
     const upTaskDescription = document.getElementById("updateTaskDescription");
@@ -242,7 +241,7 @@ const updateDataDisplay = async (id) => {
     updateTaskPriority.value = findData.taskPriority;
   } catch (err) {
     if (err) {
-      showErrorCommonFunc(err);
+      showSweatAlert(err, "warning");
     }
   }
 };
@@ -252,25 +251,24 @@ const UpdateTaskForm = async (event) => {
   event.preventDefault();
   try {
     const allData = await getDataFromDb();
+    // find all input data
     const uniqueId = event.target.uniqueId.value;
     const taskName = event.target.taskTitle.value;
     const taskDescription = event.target.taskDescription.value;
     const taskPriority = event.target.taskPriority.value;
+    // matches data find
     const index = allData.findIndex((data) => data.uniqueId === uniqueId);
     allData[index] = { uniqueId, taskName, taskDescription, taskPriority };
-    await saveToLocalStorage(allData);
-    await calledData();
-    Swal.fire({
-      icon: "success",
-      title: "Task Update Successfully",
-      showConfirmButton: false,
-      timer: 1500,
+    await saveToLocalStorage(allData, {
+      message: "Update Task Successfully",
+      code: 200,
     });
+    await calledData();
     document.getElementById("UpdateToTaskBox").style.display = "none";
     document.getElementById("addToTaskBox").style.display = "block";
   } catch (err) {
     if (err) {
-      showErrorCommonFunc(err);
+      showSweatAlert(err, "warning");
     }
   }
 };
@@ -283,6 +281,7 @@ const searchTextInput = async (event) => {
     const searchFindData = allData.filter((task) =>
       task.taskName.toLowerCase().includes(searchText.toLowerCase())
     );
+    // if cannot find any matches data
     if (searchFindData.length > 0) {
       showDataOnTheWeb(searchFindData);
     } else {
@@ -291,7 +290,7 @@ const searchTextInput = async (event) => {
     }
   } catch (err) {
     if (err) {
-      showErrorCommonFunc(err);
+      showSweatAlert(err, "warning");
     }
   }
 };
@@ -300,13 +299,17 @@ const searchTextInput = async (event) => {
 const completeTaskFromTask = async (id) => {
   try {
     const allData = await getDataFromDb();
+    // filtering the data with id
     const index = allData.findIndex((data) => parseInt(data.uniqueId) === id);
     allData[index].completeTask = true;
-    await saveToLocalStorage(allData);
+    await saveToLocalStorage(allData, {
+      message: "Complete Task Successfully",
+      code: 200,
+    });
     await calledData();
   } catch (err) {
     if (err) {
-      showErrorCommonFunc(err);
+      showSweatAlert(err, "warning");
     }
   }
 };
@@ -315,6 +318,7 @@ const completeTaskFromTask = async (id) => {
 const sortMethodFunc = async (event) => {
   const selectedValue = event.target.value;
   const allTask = await getDataFromDb();
+  // Matches Find filter
   let filterTask;
   if (selectedValue === "All") {
     filterTask = allTask;
@@ -323,5 +327,11 @@ const sortMethodFunc = async (event) => {
   } else if (selectedValue === "Incompleted") {
     filterTask = allTask.filter((task) => !task.completeTask);
   }
-  showDataOnTheWeb(filterTask);
+  // If no matches found
+  if (filterTask.length > 0) {
+    showDataOnTheWeb(filterTask);
+  } else {
+    const taskList = document.getElementById("taskList");
+    taskList.innerHTML = `<h1 class="show-no-task">No Match Found</h1>`;
+  }
 };
