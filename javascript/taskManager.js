@@ -152,98 +152,164 @@ const addToTaskDb = (task) => {
 
 // Delete Data From Local Storage
 const deleteTaskFromDb = (task) => {
-  Swal.fire({
-    title: "Are you sure ? ",
-    text: "You won't be able to revert this!",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonColor: "#3085d6",
-    cancelButtonColor: "#d33",
-    confirmButtonText: "Yes, delete it!",
-  }).then((result) => {
-    if (result.isConfirmed) {
-      const allTask = getDataFromDb();
+  try {
+    Swal.fire({
+      title: "Are you sure ? ",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const allTask = getDataFromDb();
 
-      const deleteTask = allTask.filter(
-        (item) => parseInt(item.uniqueId) !== task
-      );
-      saveToLocalStorage(deleteTask);
+        const deleteTask = allTask.filter(
+          (item) => parseInt(item.uniqueId) !== task
+        );
+        saveToLocalStorage(deleteTask);
+        Swal.fire({
+          title: "Deleted!",
+          text: "Your file has been deleted.",
+          icon: "success",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+        calledData();
+      }
+    });
+  } catch (err) {
+    if (err) {
       Swal.fire({
-        title: "Deleted!",
-        text: "Your file has been deleted.",
-        icon: "success",
+        icon: "warning",
+        title: `Message ${err}`,
         showConfirmButton: false,
         timer: 1500,
       });
-      calledData();
     }
-  });
+  }
 };
 
 // Find Task Data By Id
 const findUniqueIdData = (id) => {
-  const allData = getDataFromDb();
-  const findData = allData.find((ele) => parseInt(ele.uniqueId) === id);
-  return findData;
+  try {
+    const allData = getDataFromDb();
+    const findData = allData.find((ele) => parseInt(ele.uniqueId) === id);
+    return findData;
+  } catch (err) {
+    if (err) {
+      Swal.fire({
+        icon: "warning",
+        title: `Message ${err}`,
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    }
+  }
 };
 
 // Update Display Form Data Show
 const updateDataDisplay = (id) => {
-  const findData = findUniqueIdData(id);
-  document.getElementById("UpdateToTaskBox").style.display = "block";
-  document.getElementById("addToTaskBox").style.display = "none";
-  const uniqueId = document.getElementById("uniqueId");
-  const upTaskTitle = document.getElementById("updateTaskTitle");
-  const upTaskDescription = document.getElementById("updateTaskDescription");
-  const updateTaskPriority = document.getElementById("updateTaskPriority");
-  uniqueId.value = findData.uniqueId;
-  upTaskTitle.value = findData.taskName;
-  upTaskDescription.value = findData.taskDescription;
-  updateTaskPriority.value = findData.taskPriority;
+  try {
+    const findData = findUniqueIdData(id);
+    document.getElementById("UpdateToTaskBox").style.display = "block";
+    document.getElementById("addToTaskBox").style.display = "none";
+    const uniqueId = document.getElementById("uniqueId");
+    const upTaskTitle = document.getElementById("updateTaskTitle");
+    const upTaskDescription = document.getElementById("updateTaskDescription");
+    const updateTaskPriority = document.getElementById("updateTaskPriority");
+    uniqueId.value = findData.uniqueId;
+    upTaskTitle.value = findData.taskName;
+    upTaskDescription.value = findData.taskDescription;
+    updateTaskPriority.value = findData.taskPriority;
+  } catch (err) {
+    if (err) {
+      Swal.fire({
+        icon: "warning",
+        title: `Message ${err}`,
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    }
+  }
 };
 
 // Update Form Find Data and Update the Specific Element Of the task list and show Alert
 const UpdateTaskForm = (event) => {
   event.preventDefault();
-  const allData = getDataFromDb();
-  const uniqueId = event.target.uniqueId.value;
-  const taskName = event.target.taskTitle.value;
-  const taskDescription = event.target.taskDescription.value;
-  const taskPriority = event.target.taskPriority.value;
-  const index = allData.findIndex((data) => data.uniqueId === uniqueId);
-  allData[index] = { uniqueId, taskName, taskDescription, taskPriority };
-  saveToLocalStorage(allData);
-  calledData();
-  Swal.fire({
-    icon: "success",
-    title: "Task Update Successfully",
-    showConfirmButton: false,
-    timer: 1500,
-  });
-  document.getElementById("UpdateToTaskBox").style.display = "none";
-  document.getElementById("addToTaskBox").style.display = "block";
+  try {
+    const allData = getDataFromDb();
+    const uniqueId = event.target.uniqueId.value;
+    const taskName = event.target.taskTitle.value;
+    const taskDescription = event.target.taskDescription.value;
+    const taskPriority = event.target.taskPriority.value;
+    const index = allData.findIndex((data) => data.uniqueId === uniqueId);
+    allData[index] = { uniqueId, taskName, taskDescription, taskPriority };
+    saveToLocalStorage(allData);
+    calledData();
+    Swal.fire({
+      icon: "success",
+      title: "Task Update Successfully",
+      showConfirmButton: false,
+      timer: 1500,
+    });
+    document.getElementById("UpdateToTaskBox").style.display = "none";
+    document.getElementById("addToTaskBox").style.display = "block";
+  } catch (err) {
+    if (err) {
+      Swal.fire({
+        icon: "warning",
+        title: `Message ${err}`,
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    }
+  }
 };
 
 // Search Data From Task List
 const searchTextInput = (event) => {
-  const searchText = event.target.value;
-  const allData = getDataFromDb();
-  const searchFindData = allData.filter((task) =>
-    task.taskName.toLowerCase().includes(searchText.toLowerCase())
-  );
-  if (searchFindData.length > 0) {
-    showDataOnTheWeb(searchFindData);
-  } else {
-    const taskList = document.getElementById("taskList");
-    taskList.innerHTML = `<h1 class="show-no-task">No Match Found</h1>`;
+  try {
+    const searchText = event.target.value;
+    const allData = getDataFromDb();
+    const searchFindData = allData.filter((task) =>
+      task.taskName.toLowerCase().includes(searchText.toLowerCase())
+    );
+    if (searchFindData.length > 0) {
+      showDataOnTheWeb(searchFindData);
+    } else {
+      const taskList = document.getElementById("taskList");
+      taskList.innerHTML = `<h1 class="show-no-task">No Match Found</h1>`;
+    }
+  } catch (err) {
+    if (err) {
+      Swal.fire({
+        icon: "warning",
+        title: `Message ${err}`,
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    }
   }
 };
 
 // Complete Task From Task List Added
 const completeTaskFromTask = (id) => {
-  const allData = getDataFromDb();
-  const index = allData.findIndex((data) => parseInt(data.uniqueId) === id);
-  allData[index].completeTask = true;
-  saveToLocalStorage(allData);
-  calledData();
+  try {
+    const allData = getDataFromDb();
+    const index = allData.findIndex((data) => parseInt(data.uniqueId) === id);
+    allData[index].completeTask = true;
+    saveToLocalStorage(allData);
+    calledData();
+  } catch (err) {
+    if (err) {
+      Swal.fire({
+        icon: "warning",
+        title: `Message ${err}`,
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    }
+  }
 };
