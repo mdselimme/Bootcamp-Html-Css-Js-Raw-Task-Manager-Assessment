@@ -8,15 +8,38 @@ const showErrorCommonFunc = (err) => {
   });
 };
 
+// Creat Asynchronous Wrapper for get data from localStorage
+const getDataFromDbAsyncFunc = async (item) => {
+  return new Promise((resolve, reject) => {
+    try {
+      const taskValue = localStorage.getItem(item);
+      resolve(taskValue);
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+
+// Creat Asynchronous Wrapper for set data to localStorage
+const setDataOnTheDbAsyncFunc = async (item, value) => {
+  return new Promise((resolve, reject) => {
+    try {
+      localStorage.setItem(item, value);
+      resolve("Save data Successfully");
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+
 // Get data from Json Data from localStorage database
-const getDataFromDb = () => {
+const getDataFromDb = async () => {
   try {
-    const getTask = localStorage.getItem("tasks");
+    const getTask = await getDataFromDbAsyncFunc("tasks");
     if (getTask) {
       return JSON.parse(getTask);
-    } else {
-      return [];
     }
+    return [];
   } catch (err) {
     if (err) {
       showErrorCommonFunc(err);
@@ -25,27 +48,7 @@ const getDataFromDb = () => {
   }
 };
 
-// Find Input Data From Data Input Add to task
-const addTask = (event) => {
-  event.preventDefault();
-  try {
-    const taskName = event.target.taskTitle.value;
-    const taskDescription = event.target.taskDescription.value;
-    const taskPriority = event.target.taskPriority.value;
-    const uniqueId = new Date().getTime().toString();
-    const data = { uniqueId, taskName, taskDescription, taskPriority };
-    addToTaskDb(data);
-    const getData = getDataFromDb();
-    showDataOnTheWeb(getData);
-    event.target.reset();
-  } catch (err) {
-    if (err) {
-      showErrorCommonFunc(err);
-    }
-  }
-};
-
-// Display data on the webpage
+// Show and Display All Data On the web page
 const showDataOnTheWeb = (data) => {
   try {
     const taskList = document.getElementById("taskList");
@@ -110,36 +113,12 @@ const showDataOnTheWeb = (data) => {
   }
 };
 
-// Default Called Data form Db
-const calledData = () => {
-  try {
-    const getData = getDataFromDb();
-    showDataOnTheWeb(getData);
-  } catch (err) {
-    if (err) {
-      showErrorCommonFunc(err);
-    }
-  }
-};
-
-// Save Json Data To Local Storage
-const saveToLocalStorage = (data) => {
-  try {
-    const parseData = JSON.stringify(data);
-    localStorage.setItem("tasks", parseData);
-  } catch (err) {
-    if (err) {
-      showErrorCommonFunc(err);
-    }
-  }
-};
-
 // -- Add task in the localStorage database --
-const addToTaskDb = (task) => {
+const addToTaskDb = async (task) => {
   try {
-    const result = getDataFromDb();
+    const result = await getDataFromDb();
     const setTask = [...result, task];
-    saveToLocalStorage(setTask);
+    await saveToLocalStorage(setTask);
     Swal.fire({
       icon: "success",
       title: "Add Task Successfully",
@@ -153,8 +132,53 @@ const addToTaskDb = (task) => {
   }
 };
 
+// Find Input Data From Data Input Add to task
+const addTask = async (event) => {
+  event.preventDefault();
+  try {
+    const taskName = event.target.taskTitle.value;
+    const taskDescription = event.target.taskDescription.value;
+    const taskPriority = event.target.taskPriority.value;
+    const uniqueId = new Date().getTime().toString();
+    const data = { uniqueId, taskName, taskDescription, taskPriority };
+    await addToTaskDb(data);
+    await calledData();
+    event.target.reset();
+  } catch (err) {
+    if (err) {
+      showErrorCommonFunc(err);
+    }
+  }
+};
+
+// Display data on the webpage
+
+// Default Called Data form Db
+const calledData = async () => {
+  try {
+    const getData = await getDataFromDb();
+    showDataOnTheWeb(getData);
+  } catch (err) {
+    if (err) {
+      showErrorCommonFunc(err);
+    }
+  }
+};
+
+// Save Json Data To Local Storage
+const saveToLocalStorage = async (data) => {
+  try {
+    const parseData = JSON.stringify(data);
+    await setDataOnTheDbAsyncFunc("tasks", parseData);
+  } catch (err) {
+    if (err) {
+      showErrorCommonFunc(err);
+    }
+  }
+};
+
 // Delete Data From Local Storage
-const deleteTaskFromDb = (task) => {
+const deleteTaskFromDb = async (task) => {
   try {
     Swal.fire({
       title: "Are you sure ? ",
@@ -164,14 +188,14 @@ const deleteTaskFromDb = (task) => {
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
       confirmButtonText: "Yes, delete it!",
-    }).then((result) => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
-        const allTask = getDataFromDb();
+        const allTask = await getDataFromDb();
 
         const deleteTask = allTask.filter(
           (item) => parseInt(item.uniqueId) !== task
         );
-        saveToLocalStorage(deleteTask);
+        await saveToLocalStorage(deleteTask);
         Swal.fire({
           title: "Deleted!",
           text: "Your file has been deleted.",
@@ -179,7 +203,7 @@ const deleteTaskFromDb = (task) => {
           showConfirmButton: false,
           timer: 1500,
         });
-        calledData();
+        await calledData();
       }
     });
   } catch (err) {
@@ -190,9 +214,9 @@ const deleteTaskFromDb = (task) => {
 };
 
 // Find Task Data By Id
-const findUniqueIdData = (id) => {
+const findUniqueIdData = async (id) => {
   try {
-    const allData = getDataFromDb();
+    const allData = await getDataFromDb();
     const findData = allData.find((ele) => parseInt(ele.uniqueId) === id);
     return findData;
   } catch (err) {
@@ -203,9 +227,9 @@ const findUniqueIdData = (id) => {
 };
 
 // Update Display Form Data Show
-const updateDataDisplay = (id) => {
+const updateDataDisplay = async (id) => {
   try {
-    const findData = findUniqueIdData(id);
+    const findData = await findUniqueIdData(id);
     document.getElementById("UpdateToTaskBox").style.display = "block";
     document.getElementById("addToTaskBox").style.display = "none";
     const uniqueId = document.getElementById("uniqueId");
@@ -224,18 +248,18 @@ const updateDataDisplay = (id) => {
 };
 
 // Update Form Find Data and Update the Specific Element Of the task list and show Alert
-const UpdateTaskForm = (event) => {
+const UpdateTaskForm = async (event) => {
   event.preventDefault();
   try {
-    const allData = getDataFromDb();
+    const allData = await getDataFromDb();
     const uniqueId = event.target.uniqueId.value;
     const taskName = event.target.taskTitle.value;
     const taskDescription = event.target.taskDescription.value;
     const taskPriority = event.target.taskPriority.value;
     const index = allData.findIndex((data) => data.uniqueId === uniqueId);
     allData[index] = { uniqueId, taskName, taskDescription, taskPriority };
-    saveToLocalStorage(allData);
-    calledData();
+    await saveToLocalStorage(allData);
+    await calledData();
     Swal.fire({
       icon: "success",
       title: "Task Update Successfully",
@@ -252,10 +276,10 @@ const UpdateTaskForm = (event) => {
 };
 
 // Search Data From Task List
-const searchTextInput = (event) => {
+const searchTextInput = async (event) => {
   try {
     const searchText = event.target.value;
-    const allData = getDataFromDb();
+    const allData = await getDataFromDb();
     const searchFindData = allData.filter((task) =>
       task.taskName.toLowerCase().includes(searchText.toLowerCase())
     );
@@ -273,13 +297,13 @@ const searchTextInput = (event) => {
 };
 
 // Complete Task From Task List Added
-const completeTaskFromTask = (id) => {
+const completeTaskFromTask = async (id) => {
   try {
-    const allData = getDataFromDb();
+    const allData = await getDataFromDb();
     const index = allData.findIndex((data) => parseInt(data.uniqueId) === id);
     allData[index].completeTask = true;
-    saveToLocalStorage(allData);
-    calledData();
+    await saveToLocalStorage(allData);
+    await calledData();
   } catch (err) {
     if (err) {
       showErrorCommonFunc(err);
