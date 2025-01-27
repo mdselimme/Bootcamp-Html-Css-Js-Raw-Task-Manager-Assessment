@@ -2,13 +2,16 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Task Management App</title>
-    <link rel="stylesheet" href="./styles/styles.css" />
+    <!-- Sweat Alert Cdn  -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.15.10/dist/sweetalert2.all.min.js"></script>
     <link
       href="https://cdn.jsdelivr.net/npm/sweetalert2@11.15.10/dist/sweetalert2.min.css "
       rel="stylesheet"
     />
+    <!-- Style Css Link  -->
+    <link rel="stylesheet" href="./styles/styles.css" />
   </head>
   <body onload="calledData()">
     <div class="container">
@@ -75,6 +78,7 @@
         </form>
       </div>
       <!-- Update Task List Container -->
+      <!-- Task List Show Start  -->
       <div id="taskHead" class="taskList">
         <div class="search-input">
           <input
@@ -92,7 +96,9 @@
         </div>
       </div>
       <div class="taskList" id="taskList"></div>
+      <!-- Task List Show End  -->
     </div>
+    <!-- Javascript file connection  -->
     <script src="./javascript/taskManager.js"></script>
   </body>
 </html>

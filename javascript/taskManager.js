@@ -50,15 +50,51 @@ const showDataOnTheWeb = (data) => {
       <p>${element.taskName}</p>
       <p>${element.taskDescription}</p>
       <p>${element.taskPriority}</p>
+      <div>
+          ${
+            element.completeTask === true
+              ? `<div class="task-actions">
+              <span class="complete-task">Completed</span> <button
+          onclick="deleteTaskFromDb(${element.uniqueId})"
+          class="delete-btn"
+        >
+          Delete Task
+        </button>
+              </div>`
+              : `
       <div class="task-actions">
-      <button class="complete-btn">Mark Complete</button>
-      <button onclick="updateDataDisplay(${element.uniqueId})" class="update-btn">Update</button>
-      <button onclick="deleteTaskFromDb(${element.uniqueId})" class="delete-btn">Delete</button>
+        <button
+          class="complete-btn"
+          onclick="completeTaskFromTask(${element.uniqueId})"
+        >
+          Mark Complete
+        </button>
+        <button
+          onclick="updateDataDisplay(${element.uniqueId})"
+          class="update-btn"
+        >
+          Update
+        </button>
+        <button
+          onclick="deleteTaskFromDb(${element.uniqueId})"
+          class="delete-btn"
+        >
+          Delete
+        </button>
+      </div>
+    `
+          }
       </div>
     `;
       taskList.appendChild(div);
     });
   }
+};
+
+// Default Called Data form Db
+const calledData = () => {
+  const getData = getDataFromDb();
+  showDataOnTheWeb(getData);
 };
 
 // Save Json Data To Local Storage
@@ -169,8 +205,11 @@ const searchTextInput = (event) => {
   }
 };
 
-// Default Called Data form Db
-const calledData = () => {
-  const getData = getDataFromDb();
-  showDataOnTheWeb(getData);
+// Complete Task From Task List Added
+const completeTaskFromTask = (id) => {
+  const allData = getDataFromDb();
+  const index = allData.findIndex((data) => parseInt(data.uniqueId) === id);
+  allData[index].completeTask = true;
+  saveToLocalStorage(allData);
+  calledData();
 };
