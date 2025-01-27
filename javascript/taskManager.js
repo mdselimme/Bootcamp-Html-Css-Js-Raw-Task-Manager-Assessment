@@ -1,10 +1,22 @@
 // Get data from Json Data from localStorage database
 const getDataFromDb = () => {
-  const getTask = localStorage.getItem("tasks");
-  if (getTask) {
-    return JSON.parse(getTask);
+  try {
+    const getTask = localStorage.getItem("tasks");
+    if (getTask) {
+      return JSON.parse(getTask);
+    }
+    return [];
+  } catch (err) {
+    if (err) {
+      Swal.fire({
+        icon: "warning",
+        title: `Message ${err}`,
+        showConfirmButton: false,
+        timer: 1500,
+      });
+      return [];
+    }
   }
-  return [];
 };
 
 // Find Input Data From Data Input Add to task
@@ -24,7 +36,7 @@ const addTask = (event) => {
     if (err) {
       Swal.fire({
         icon: "warning",
-        title: "Data Cannot Find",
+        title: `Message ${err}`,
         showConfirmButton: false,
         timer: 1500,
       });
@@ -34,18 +46,19 @@ const addTask = (event) => {
 
 // Display data on the webpage
 const showDataOnTheWeb = (data) => {
-  const taskList = document.getElementById("taskList");
-  const taskHead = document.getElementById("taskHead");
-  taskList.textContent = "";
-  if (data.length === 0) {
-    taskHead.style.display = "none";
-    taskList.innerHTML = `<h1 class="show-no-task">No Task Added</h1>`;
-  } else {
-    taskHead.style.display = "block";
-    data.forEach((element) => {
-      const div = document.createElement("div");
-      div.classList.add("task-item");
-      div.innerHTML = ` 
+  try {
+    const taskList = document.getElementById("taskList");
+    const taskHead = document.getElementById("taskHead");
+    taskList.textContent = "";
+    if (data.length === 0) {
+      taskHead.style.display = "none";
+      taskList.innerHTML = `<h1 class="show-no-task">No Task Added</h1>`;
+    } else {
+      taskHead.style.display = "block";
+      data.forEach((element) => {
+        const div = document.createElement("div");
+        div.classList.add("task-item");
+        div.innerHTML = ` 
       <p>${element.uniqueId}</p>
       <p>${element.taskName}</p>
       <p>${element.taskDescription}</p>
@@ -86,8 +99,18 @@ const showDataOnTheWeb = (data) => {
           }
       </div>
     `;
-      taskList.appendChild(div);
-    });
+        taskList.appendChild(div);
+      });
+    }
+  } catch (err) {
+    if (err) {
+      Swal.fire({
+        icon: "warning",
+        title: `Message ${err}`,
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    }
   }
 };
 
@@ -105,15 +128,26 @@ const saveToLocalStorage = (data) => {
 
 // -- Add task in the localStorage database --
 const addToTaskDb = (task) => {
-  const result = getDataFromDb();
-  const setTask = [...result, task];
-  saveToLocalStorage(setTask);
-  Swal.fire({
-    icon: "success",
-    title: "Add Task Successfully",
-    showConfirmButton: false,
-    timer: 1500,
-  });
+  try {
+    const result = getDataFromDb();
+    const setTask = [...result, task];
+    saveToLocalStorage(setTask);
+    Swal.fire({
+      icon: "success",
+      title: "Add Task Successfully",
+      showConfirmButton: false,
+      timer: 1500,
+    });
+  } catch (err) {
+    if (err) {
+      Swal.fire({
+        icon: "warning",
+        title: `Message ${err}`,
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    }
+  }
 };
 
 // Delete Data From Local Storage
