@@ -14,8 +14,9 @@ const getDataFromDb = () => {
     const getTask = localStorage.getItem("tasks");
     if (getTask) {
       return JSON.parse(getTask);
+    } else {
+      return [];
     }
-    return [];
   } catch (err) {
     if (err) {
       showErrorCommonFunc(err);
