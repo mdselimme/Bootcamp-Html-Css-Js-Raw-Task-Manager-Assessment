@@ -1,7 +1,12 @@
 @import url("https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap");
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Open Sans", serif;
+}
 
 body {
-  font-family: "Open Sans", serif;
   max-width: 55%;
   margin: 0 auto;
   padding: 20px;
@@ -27,10 +32,19 @@ body {
   margin-bottom: 10px;
   border: 1px solid #ddd;
   border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: 500;
 }
 
 #taskForm textarea {
   resize: none;
+}
+
+#taskForm button {
+  background: #55efc4;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #000000;
 }
 
 .taskList {
@@ -45,14 +59,14 @@ body {
   border-radius: 5px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   display: grid;
-  grid-template-columns: 15% 15% 25% 12% 33%;
+  grid-template-columns: 15% 15% 25% 15% 30%;
   align-items: center;
   text-align: center;
 }
 
 .task-head {
   margin-bottom: 1rem;
-  padding: 8px 5px;
+  padding: 6px 3px;
 }
 
 .task-head p {
@@ -72,6 +86,16 @@ body {
   border-radius: 3px;
   cursor: pointer;
   color: white;
+}
+.search-input input {
+  width: 50%;
+  padding: 10px;
+  background: #fff;
+  border: 1px solid #6c5ce7;
+  outline: none;
+  font-size: 1rem;
+  border-radius: 6px;
+  margin: 10px auto;
 }
 .complete-btn {
   background-color: #4caf50;

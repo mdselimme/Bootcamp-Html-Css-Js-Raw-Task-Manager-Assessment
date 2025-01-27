@@ -10,15 +10,26 @@ const getDataFromDb = () => {
 // Find Input Data From Data Input Add to task
 const addTask = (event) => {
   event.preventDefault();
-  const taskName = event.target.taskTitle.value;
-  const taskDescription = event.target.taskDescription.value;
-  const taskPriority = event.target.taskPriority.value;
-  const uniqueId = new Date().getTime().toString();
-  const data = { uniqueId, taskName, taskDescription, taskPriority };
-  addToTaskDb(data);
-  const getData = getDataFromDb();
-  showDataOnTheWeb(getData);
-  event.target.reset();
+  try {
+    const taskName = event.target.taskTitle.value;
+    const taskDescription = event.target.taskDescription.value;
+    const taskPriority = event.target.taskPriority.value;
+    const uniqueId = new Date().getTime().toString();
+    const data = { uniqueId, taskName, taskDescription, taskPriority };
+    addToTaskDb(data);
+    const getData = getDataFromDb();
+    showDataOnTheWeb(getData);
+    event.target.reset();
+  } catch (err) {
+    if (err) {
+      Swal.fire({
+        icon: "warning",
+        title: "Data Cannot Find",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    }
+  }
 };
 
 // Display data on the webpage
@@ -40,7 +51,7 @@ const showDataOnTheWeb = (data) => {
       <p>${element.taskDescription}</p>
       <p>${element.taskPriority}</p>
       <div class="task-actions">
-      <button class="complete-btn">Complete</button>
+      <button class="complete-btn">Mark Complete</button>
       <button onclick="updateDataDisplay(${element.uniqueId})" class="update-btn">Update</button>
       <button onclick="deleteTaskFromDb(${element.uniqueId})" class="delete-btn">Delete</button>
       </div>
@@ -141,6 +152,21 @@ const UpdateTaskForm = (event) => {
   });
   document.getElementById("UpdateToTaskBox").style.display = "none";
   document.getElementById("addToTaskBox").style.display = "block";
+};
+
+// Search Data From Task List
+const searchTextInput = (event) => {
+  const searchText = event.target.value;
+  const allData = getDataFromDb();
+  const searchFindData = allData.filter((task) =>
+    task.taskName.toLowerCase().includes(searchText.toLowerCase())
+  );
+  if (searchFindData.length > 0) {
+    showDataOnTheWeb(searchFindData);
+  } else {
+    const taskList = document.getElementById("taskList");
+    taskList.innerHTML = `<h1 class="show-no-task">No Match Found</h1>`;
+  }
 };
 
 // Default Called Data form Db

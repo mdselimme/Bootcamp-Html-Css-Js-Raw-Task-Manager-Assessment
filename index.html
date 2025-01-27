@@ -76,6 +76,13 @@
       </div>
       <!-- Update Task List Container -->
       <div id="taskHead" class="taskList">
+        <div class="search-input">
+          <input
+            oninput="searchTextInput(event)"
+            type="text"
+            placeholder="Search by Task Title"
+          />
+        </div>
         <div class="task-item task-head">
           <p>Id</p>
           <p>Task Title</p>
