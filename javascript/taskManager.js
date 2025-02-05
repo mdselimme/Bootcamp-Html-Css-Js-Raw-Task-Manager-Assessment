@@ -99,12 +99,12 @@ const showDataOnTheWeb = (data) => {
         >
           <i class="fa-regular fa-square-check"></i>
         </button>
-        <button  title="Edit Task" 
-          onclick="updateDataDisplay(${element.uniqueId})"
-          class="update-btn"
-        >
-          <i class="fa-solid fa-pen-to-square"></i>
-        </button>
+        ${element.intervalId === null ? `<button title="Edit Task"
+              onclick="updateDataDisplay(${element.uniqueId})"
+              class="update-btn"
+            >
+              <i class="fa-solid fa-pen-to-square"></i>
+            </button>` : ""}
         <button title="Delete Task" 
           onclick="deleteTaskFromDb(${element.uniqueId})"
           class="delete-btn"
@@ -272,10 +272,6 @@ const findUniqueIdData = async (id) => {
   }
 };
 
-// Edit Button Hide Features 
-const editButtonHideWhenStartTimerCliceked = () => {
-
-};
 
 
 // start timer function
