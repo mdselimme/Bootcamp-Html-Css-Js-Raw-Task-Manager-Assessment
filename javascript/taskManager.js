@@ -169,7 +169,6 @@ const addTask = async (event) => {
     const hours = getTimerInputValue("task-hours");
     const minutes = getTimerInputValue("task-minutes");
     const seconds = getTimerInputValue("task-seconds");
-    console.log(hours, minutes, seconds);
     if (hours === 0 && seconds === 0 && minutes === 0) {
       showSweatAlert(
         { message: "Please Enter your task Complete Time" },
@@ -186,6 +185,7 @@ const addTask = async (event) => {
       taskDescription,
       taskPriority,
       totalSeconds,
+      completeTask: false,
       remaining: totalSeconds,
       intervalId: null,
     };
@@ -279,16 +279,20 @@ const startTimerFunc = async (id) => {
   const task = await findUniqueIdData(id);
   const allTaskData = await getDataFromDb();
   const index = allTaskData.findIndex((t) => t.uniqueId === id.toString());
-  if (!task || task.completeTask) return;
+  console.log(task)
+  if (!task || task.completeTask) {
+    clearInterval(task.intervalId);
+    return;
+  }
   if (task.intervalId) {
     clearInterval(task.intervalId);
     task.intervalId = null;
+    task.remaining = 0;
   } else {
     task.intervalId = setInterval(async () => {
       task.remaining--;
       if (task.remaining <= 0) {
         clearInterval(task.intervalId);
-        task.remaining = 0;
         task.completeTask = true;
       }
       allTaskData[index] = task;
@@ -339,12 +343,14 @@ const updateDataDisplay = async (id) => {
 
 // Update Form Find Data and Update the Specific Element Of the task list and show Alert
 const UpdateTaskForm = async (event) => {
+  console.log(event)
   event.preventDefault();
   try {
     const allData = await getDataFromDb();
     // find all input data
     const uniqueId = event.target.uniqueId.value;
     const taskName = event.target.taskTitle.value;
+    console.log(taskName)
     const taskDescription = event.target.taskDescription.value;
     const taskPriority = event.target.taskPriority.value;
     // Timer Value Find
@@ -360,13 +366,14 @@ const UpdateTaskForm = async (event) => {
       return;
     }
     const totalSeconds = hours * 3600 + minutes * 60 + seconds;
-    console.log(totalSeconds)
     // matches data find
     const index = allData.findIndex((data) => data.uniqueId === uniqueId);
-    allData[index] = {
-      uniqueId, taskName, taskDescription, taskPriority, totalSeconds,
-      remaining: totalSeconds,
-    };
+    console.log(allData[index])
+    allData[index].taskName = taskName;
+    allData[index].taskDescription = taskDescription;
+    allData[index].taskPriority = taskPriority;
+    allData[index].totalSeconds = totalSeconds;
+    allData[index].remaining = totalSeconds;
     await saveToLocalStorage(allData, {
       message: "Update Task Successfully",
       code: 200,
@@ -411,11 +418,11 @@ const completeTaskFromTask = async (id) => {
     const index = allData.findIndex((data) => parseInt(data.uniqueId) === id);
     allData[index].completeTask = true;
     allData[index].remaining = 0;
-    await startTimerFunc(id);
     await saveToLocalStorage(allData, {
       message: "Complete Task Successfully",
       code: 200,
     });
+    await startTimerFunc(id);
     calledData();
   } catch (err) {
     if (err) {
