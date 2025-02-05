@@ -241,7 +241,7 @@ const deleteTaskFromDb = async (task) => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         const allTask = await getDataFromDb();
-
+        await startTimerFunc(task);
         const deleteTask = allTask.filter(
           (item) => parseInt(item.uniqueId) !== task
         );
@@ -271,6 +271,12 @@ const findUniqueIdData = async (id) => {
     }
   }
 };
+
+// Edit Button Hide Features 
+const editButtonHideWhenStartTimerCliceked = () => {
+
+};
+
 
 // start timer function
 const startTimerFunc = async (id) => {
@@ -313,10 +319,21 @@ const updateDataDisplay = async (id) => {
     const upTaskTitle = document.getElementById("updateTaskTitle");
     const upTaskDescription = document.getElementById("updateTaskDescription");
     const updateTaskPriority = document.getElementById("updateTaskPriority");
+    const updateTaskHours = document.getElementById("up-task-hours");
+    const updateTaskMinutes = document.getElementById("up-task-minutes");
+    const updateTaskSeconds = document.getElementById("up-task-seconds");
+    // Show All Element Value 
     uniqueId.value = findData.uniqueId;
     upTaskTitle.value = findData.taskName;
     upTaskDescription.value = findData.taskDescription;
     updateTaskPriority.value = findData.taskPriority;
+    // Time Status Show 
+    const hours = Math.floor(findData.totalSeconds / 3600);
+    const minutes = Math.floor((findData.totalSeconds % 3600) / 60);
+    const second = findData.totalSeconds % 60;
+    updateTaskHours.value = hours;
+    updateTaskMinutes.value = minutes;
+    updateTaskSeconds.value = second;
   } catch (err) {
     if (err) {
       showSweatAlert(err, "warning");
@@ -334,9 +351,26 @@ const UpdateTaskForm = async (event) => {
     const taskName = event.target.taskTitle.value;
     const taskDescription = event.target.taskDescription.value;
     const taskPriority = event.target.taskPriority.value;
+    // Timer Value Find
+    const hours = getTimerInputValue("up-task-hours");
+    const minutes = getTimerInputValue("up-task-minutes");
+    const seconds = getTimerInputValue("up-task-seconds");
+
+    if (hours === 0 && seconds === 0 && minutes === 0) {
+      showSweatAlert(
+        { message: "Please Enter your task Complete Time" },
+        "warning"
+      );
+      return;
+    }
+    const totalSeconds = hours * 3600 + minutes * 60 + seconds;
+    console.log(totalSeconds)
     // matches data find
     const index = allData.findIndex((data) => data.uniqueId === uniqueId);
-    allData[index] = { uniqueId, taskName, taskDescription, taskPriority };
+    allData[index] = {
+      uniqueId, taskName, taskDescription, taskPriority, totalSeconds,
+      remaining: totalSeconds,
+    };
     await saveToLocalStorage(allData, {
       message: "Update Task Successfully",
       code: 200,
@@ -381,6 +415,7 @@ const completeTaskFromTask = async (id) => {
     const index = allData.findIndex((data) => parseInt(data.uniqueId) === id);
     allData[index].completeTask = true;
     allData[index].remaining = 0;
+    await startTimerFunc(id);
     await saveToLocalStorage(allData, {
       message: "Complete Task Successfully",
       code: 200,

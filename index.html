@@ -107,6 +107,34 @@
             <option value="Medium Priority">Medium Priority</option>
             <option value="High Priority">High Priority</option>
           </select>
+           <label for="taskDescription"
+            >How much time need : Hour - Minutes - Seconds</label
+          >
+          <div class="task-timer">
+            <input
+              type="number"
+              id="up-task-hours"
+              min="0"
+              value="0"
+              placeholder="Enter Hour"
+            />
+            <input
+              type="number"
+              id="up-task-minutes"
+              min="0"
+              max="59"
+              value="0"
+              placeholder="Enter Minute"
+            />
+            <input
+              type="number"
+              id="up-task-seconds"
+              min="0"
+              max="59"
+              value="0"
+              placeholder="Enter Seconds"
+            />
+          </div>
           <button type="submit" id="submitBtn">Update Task</button>
         </form>
       </div>
