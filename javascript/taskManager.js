@@ -1,11 +1,13 @@
 // Show error Common Function
 const showSweatAlert = (err, icon) => {
-  Swal.fire({
-    icon: icon,
-    title: `${err.message}`,
-    showConfirmButton: false,
-    timer: 1500,
-  });
+  if (err && icon) {
+    Swal.fire({
+      icon: icon,
+      title: `${err.message}`,
+      showConfirmButton: false,
+      timer: 1500,
+    });
+  }
 };
 
 // Creat Asynchronous Wrapper for get data from localStorage
@@ -69,36 +71,45 @@ const showDataOnTheWeb = (data) => {
       <p>${element.taskName}</p>
       <p>${element.taskDescription}</p>
       <p>${element.taskPriority}</p>
+      <p>${element.remaining !== 0
+            ? `${formatTime(element.remaining)} <button  title="Start Task" 
+          class="complete-btn"
+          onclick="startTimerFunc(${element.uniqueId})"
+        >
+          Start
+        </button>`
+            : `${formatTime(element.remaining)}`
+          }</p>
       <div>
-          ${
-            element.completeTask === true
-              ? `<div class="task-actions">
-              <span class="complete-task">Completed</span> <button
+          ${element.completeTask === true
+            ? `<div class="task-actions">
+              <span title="task completed" class="complete-task"><i class="fa-solid fa-check"></i></span> 
+              <button  title="Delete Task" 
           onclick="deleteTaskFromDb(${element.uniqueId})"
           class="delete-btn"
         >
-          Delete Task
+          <i class="fa-solid fa-trash"></i>
         </button>
               </div>`
-              : `
+            : `
       <div class="task-actions">
-        <button
+        <button  title="Mark Complete" 
           class="complete-btn"
-          onclick="completeTaskFromTask(${element.uniqueId})"
+          onclick="completeTaskFromTask(${element.uniqueId})" 
         >
-          Mark Complete
+          <i class="fa-regular fa-square-check"></i>
         </button>
-        <button
+        <button  title="Edit Task" 
           onclick="updateDataDisplay(${element.uniqueId})"
           class="update-btn"
         >
-          Update
+          <i class="fa-solid fa-pen-to-square"></i>
         </button>
-        <button
+        <button title="Delete Task" 
           onclick="deleteTaskFromDb(${element.uniqueId})"
           class="delete-btn"
         >
-          Delete
+          <i class="fa-solid fa-trash"></i>
         </button>
       </div>
     `
@@ -131,6 +142,21 @@ const addToTaskDb = async (task) => {
   }
 };
 
+// Get timer input value
+const getTimerInputValue = (inputId) => {
+  return parseInt(document.getElementById(inputId).value) || 0;
+};
+
+const formatTime = (seconds) => {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const second = seconds % 60;
+  return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(
+    2,
+    "0"
+  )}:${String(second).padStart(2, "0")}`;
+};
+
 // Find Input Data From Data Input Add to task
 const addTask = async (event) => {
   event.preventDefault();
@@ -139,8 +165,30 @@ const addTask = async (event) => {
     const taskName = event.target.taskTitle.value;
     const taskDescription = event.target.taskDescription.value;
     const taskPriority = event.target.taskPriority.value;
+    // Timer Value Find
+    const hours = getTimerInputValue("task-hours");
+    const minutes = getTimerInputValue("task-minutes");
+    const seconds = getTimerInputValue("task-seconds");
+    console.log(hours, minutes, seconds);
+    if (hours === 0 && seconds === 0 && minutes === 0) {
+      showSweatAlert(
+        { message: "Please Enter your task Complete Time" },
+        "warning"
+      );
+      return;
+    }
+    const totalSeconds = hours * 3600 + minutes * 60 + seconds;
+    // Unique Id Maker
     const uniqueId = new Date().getTime().toString();
-    const data = { uniqueId, taskName, taskDescription, taskPriority };
+    const data = {
+      uniqueId,
+      taskName,
+      taskDescription,
+      taskPriority,
+      totalSeconds,
+      remaining: totalSeconds,
+      intervalId: null,
+    };
     await addToTaskDb(data);
     await calledData();
     event.target.reset();
@@ -224,6 +272,36 @@ const findUniqueIdData = async (id) => {
   }
 };
 
+// start timer function
+const startTimerFunc = async (id) => {
+  const task = await findUniqueIdData(id);
+  const allTaskData = await getDataFromDb();
+  const index = allTaskData.findIndex((t) => t.uniqueId === id.toString());
+  if (!task || task.completeTask) return;
+  if (task.intervalId) {
+    clearInterval(task.intervalId);
+    task.intervalId = null;
+  } else {
+    task.intervalId = setInterval(async () => {
+      task.remaining--;
+      if (task.remaining <= 0) {
+        clearInterval(task.intervalId);
+        task.remaining = 0;
+        task.completeTask = true;
+      }
+      allTaskData[index] = task;
+      if (task.completeTask === true) {
+        await saveToLocalStorage(allTaskData, {
+          message: "Task Completed ? Because Timer is over",
+        });
+        calledData();
+      }
+      await saveToLocalStorage(allTaskData, undefined);
+      calledData();
+    }, 1000);
+  }
+};
+
 // Update Display Form Data Show
 const updateDataDisplay = async (id) => {
   try {
@@ -263,7 +341,7 @@ const UpdateTaskForm = async (event) => {
       message: "Update Task Successfully",
       code: 200,
     });
-    await calledData();
+    calledData();
     document.getElementById("UpdateToTaskBox").style.display = "none";
     document.getElementById("addToTaskBox").style.display = "block";
   } catch (err) {
@@ -302,11 +380,12 @@ const completeTaskFromTask = async (id) => {
     // filtering the data with id
     const index = allData.findIndex((data) => parseInt(data.uniqueId) === id);
     allData[index].completeTask = true;
+    allData[index].remaining = 0;
     await saveToLocalStorage(allData, {
       message: "Complete Task Successfully",
       code: 200,
     });
-    await calledData();
+    calledData();
   } catch (err) {
     if (err) {
       showSweatAlert(err, "warning");

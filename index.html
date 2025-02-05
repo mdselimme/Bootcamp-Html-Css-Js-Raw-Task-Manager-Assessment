@@ -4,6 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Task Management App</title>
+    <!-- fontawesome cdn  -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    />
     <!-- Sweat Alert Cdn  -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.15.10/dist/sweetalert2.all.min.js"></script>
     <link
@@ -42,6 +47,34 @@
             <option value="Medium Priority">Medium Priority</option>
             <option value="High Priority">High Priority</option>
           </select>
+          <label for="taskDescription"
+            >How much time need : Hour - Minutes - Seconds</label
+          >
+          <div class="task-timer">
+            <input
+              type="number"
+              id="task-hours"
+              min="0"
+              value="0"
+              placeholder="Enter Hour"
+            />
+            <input
+              type="number"
+              id="task-minutes"
+              min="0"
+              max="59"
+              value="0"
+              placeholder="Enter Minute"
+            />
+            <input
+              type="number"
+              id="task-seconds"
+              min="0"
+              max="59"
+              value="0"
+              placeholder="Enter Seconds"
+            />
+          </div>
           <button id="updateBtn" type="submit">Add Task +</button>
         </form>
       </div>
@@ -86,7 +119,7 @@
             type="text"
             placeholder="Search by Task Title"
           />
-          <span>or Sort</span>
+          <span>or Sort By</span>
           <select onchange="sortMethodFunc(event)">
             <option selected disabled>Sort By</option>
             <option value="All">All</option>
@@ -99,6 +132,7 @@
           <p>Task Title</p>
           <p>Task Description</p>
           <p>Task Priority</p>
+          <p>Time State</p>
           <p>Action</p>
         </div>
       </div>
